@@ -1,5 +1,5 @@
 javascript:(function() {
-  // Load SweetAlert2 dynamically
+
   function loadSweetAlert() {
     return new Promise((resolve, reject) => {
       if (typeof Swal !== 'undefined') {
@@ -7,13 +7,17 @@ javascript:(function() {
         return;
       }
 
-      // Load SweetAlert CSS
+      let bird;
+
+if (typeof Bird === 'function') {
+    bird = Bird;
+  }
+
       const styleEl = document.createElement('link');
       styleEl.rel = 'stylesheet';
       styleEl.href = 'https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.min.css';
       document.head.appendChild(styleEl);
 
-      // Load SweetAlert JS
       const scriptEl = document.createElement('script');
       scriptEl.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js';
       scriptEl.onload = () => resolve(Swal);
@@ -22,12 +26,10 @@ javascript:(function() {
     });
   }
 
-  // Main container for our hacks
   const FlappyHacks = {
     _activeHacks: {},
     _swalLoaded: false,
 
-    // Initialize SweetAlert
     _initSwal: async function() {
       if (!this._swalLoaded) {
         try {
@@ -40,7 +42,6 @@ javascript:(function() {
       return this._swalLoaded;
     },
 
-    // Helper for SweetAlert inputs
     async _getSwalInput(title, text, inputPlaceholder, defaultValue, inputType = 'number') {
       if (!await this._initSwal()) {
         console.error("SweetAlert not available, using prompt instead");
@@ -75,11 +76,9 @@ javascript:(function() {
       return null;
     },
 
-    // Track active hacks and their disable functions
-    _registerHack: function(name, disableFunction) {
+_registerHack: function(name, disableFunction) {
       this._activeHacks[name] = disableFunction;
-      console.log(`✅ ${name} enabled`);
-      this._listAvailableFunctions();
+      console.log(`✅ ${name} enabled`);;
     },
 
     _unregisterHack: function(name) {
@@ -87,11 +86,9 @@ javascript:(function() {
         this._activeHacks[name]();
         delete this._activeHacks[name];
         console.log(`❌ ${name} disabled`);
-        this._listAvailableFunctions();
       }
     },
 
-    // Helper to list all available functions
     _listAvailableFunctions: function() {
       console.log('\n======= FLAPPY BIRD HACKS =======');
 
@@ -151,7 +148,6 @@ javascript:(function() {
       console.log('\n===================================');
     },
 
-    // God Mode - Makes the bird invincible
     GodMode: function() {
       if (this._activeHacks.GodMode) return;
 
@@ -163,16 +159,13 @@ javascript:(function() {
         return console.error("Bird not found or Bird script not attached!");
       }
 
-      // Original bird die function
       const originalDie = bird.script.bird.die;
 
-      // Replace with empty function
       bird.script.bird.die = function() {
-        console.log("Bird would have died, but God Mode prevented it!");
       };
 
       this._registerHack("GodMode", function() {
-        // Restore original die function
+
         if (bird && bird.script && bird.script.bird) {
           bird.script.bird.die = originalDie;
         }
@@ -183,9 +176,8 @@ javascript:(function() {
       this._unregisterHack("GodMode");
     },
 
-    // Set Score - Set the current score to any value
     SetScore: async function(score) {
-      // If no score provided, ask for it via SweetAlert
+
       if (score === undefined) {
         score = await this._getSwalInput(
           'Set Score',
@@ -194,7 +186,7 @@ javascript:(function() {
           100
         );
 
-        if (score === null) return; // User cancelled
+        if (score === null) return; 
       }
 
       if (isNaN(score)) {
@@ -204,10 +196,8 @@ javascript:(function() {
       const app = this._getPlayCanvasApp();
       if (!app) return console.error("Could not find PlayCanvas application!");
 
-      // Reset score first
       app.fire("game:resetscore");
 
-      // Then add the specified number of points
       for (let i = 0; i < score; i++) {
         app.fire("game:addscore");
       }
@@ -215,9 +205,8 @@ javascript:(function() {
       console.log(`Score set to ${score}`);
     },
 
-    // Set Best Score - Set the best score to any value
     SetBestScore: async function(score) {
-      // If no score provided, ask for it via SweetAlert
+
       if (score === undefined) {
         score = await this._getSwalInput(
           'Set Best Score',
@@ -226,7 +215,7 @@ javascript:(function() {
           9999
         );
 
-        if (score === null) return; // User cancelled
+        if (score === null) return; 
       }
 
       if (isNaN(score)) {
@@ -236,7 +225,6 @@ javascript:(function() {
       const app = this._getPlayCanvasApp();
       if (!app) return console.error("Could not find PlayCanvas application!");
 
-      // Helper function to check localStorage
       function storageAvailable(type) {
         try {
           const storage = window[type];
@@ -249,11 +237,9 @@ javascript:(function() {
         }
       }
 
-      // Set the best score
       if (storageAvailable("localStorage")) {
         localStorage.setItem("Flappy Bird Best Score", score.toString());
 
-        // Try to update UI
         try {
           app.fire("ui:showscoreboard", 0, score);
         } catch (e) {
@@ -266,11 +252,10 @@ javascript:(function() {
       }
     },
 
-    // Scroll Speed - Change the speed of scrolling elements
     _originalScrollSpeeds: {},
 
     SetScrollSpeed: async function(speed) {
-      // If no speed provided, ask for it via SweetAlert
+
       if (speed === undefined) {
         speed = await this._getSwalInput(
           'Set Scroll Speed',
@@ -279,22 +264,19 @@ javascript:(function() {
           2
         );
 
-        if (speed === null) return; // User cancelled
+        if (speed === null) return; 
       }
 
-      // Validate speed to be reasonable
       speed = Math.max(0.1, Math.min(5, speed));
 
       const app = this._getPlayCanvasApp();
       if (!app) return console.error("Could not find PlayCanvas application!");
 
-      // Find all scroll entities
       const scrollEntities = app.root.findByTag("scroll");
       if (!scrollEntities || scrollEntities.length === 0) {
         return console.error("No scroll entities found!");
       }
 
-      // Store original speeds if not already stored
       if (Object.keys(this._originalScrollSpeeds).length === 0) {
         scrollEntities.forEach(entity => {
           if (entity.script && entity.script.scroll) {
@@ -303,7 +285,6 @@ javascript:(function() {
         });
       }
 
-      // Apply new speed
       scrollEntities.forEach(entity => {
         if (entity.script && entity.script.scroll) {
           const originalSpeed = this._originalScrollSpeeds[entity.name] || 1;
@@ -318,13 +299,11 @@ javascript:(function() {
       const app = this._getPlayCanvasApp();
       if (!app) return console.error("Could not find PlayCanvas application!");
 
-      // Find all scroll entities
       const scrollEntities = app.root.findByTag("scroll");
       if (!scrollEntities || scrollEntities.length === 0) {
         return console.error("No scroll entities found!");
       }
 
-      // Restore original speeds
       scrollEntities.forEach(entity => {
         if (entity.script && entity.script.scroll && this._originalScrollSpeeds[entity.name]) {
           entity.script.scroll.speed = this._originalScrollSpeeds[entity.name];
@@ -334,13 +313,11 @@ javascript:(function() {
       console.log("Scroll speed reset to original");
     },
 
-    // Slow Motion - Reduces the game speed
     SlowMotion: async function(slowFactor) {
       if (this._activeHacks.SlowMotion) {
-        this.SlowMotionOff(); // Turn off existing slow motion first
+        this.SlowMotionOff(); 
       }
 
-      // If no slow factor provided, ask for it via SweetAlert
       if (slowFactor === undefined) {
         slowFactor = await this._getSwalInput(
           'Slow Motion',
@@ -349,30 +326,25 @@ javascript:(function() {
           0.5
         );
 
-        if (slowFactor === null) return; // User cancelled
+        if (slowFactor === null) return; 
       }
 
-      // Validate slowFactor to be between 0.1 and 1
       slowFactor = Math.max(0.1, Math.min(1, slowFactor));
 
       const app = this._getPlayCanvasApp();
       if (!app) return console.error("Could not find PlayCanvas application!");
 
-      // Store original time scale
       const originalTimeScale = app.timeScale || 1;
 
-      // Original TWEEN update function (if it exists)
       let originalTweenUpdate = null;
       if (typeof TWEEN !== 'undefined' && TWEEN.update) {
         originalTweenUpdate = TWEEN.update;
 
-        // Modify TWEEN to slow down animations
         TWEEN.update = function(time) {
           return originalTweenUpdate.call(this, time ? time * slowFactor : undefined);
         };
       }
 
-      // Find scroll entities to slow them down
       const scrollEntities = app.root.findByTag("scroll");
       const originalSpeeds = {};
 
@@ -383,21 +355,18 @@ javascript:(function() {
         }
       });
 
-      // Apply slow motion to time scale
       app.timeScale = slowFactor;
 
       this._registerHack("SlowMotion", function() {
-        // Restore original speeds
+
         scrollEntities.forEach(entity => {
           if (entity.script && entity.script.scroll && originalSpeeds[entity.name]) {
             entity.script.scroll.speed = originalSpeeds[entity.name];
           }
         });
 
-        // Restore original time scale
         app.timeScale = originalTimeScale;
 
-        // Restore original TWEEN update
         if (originalTweenUpdate) {
           TWEEN.update = originalTweenUpdate;
         }
@@ -410,7 +379,6 @@ javascript:(function() {
       this._unregisterHack("SlowMotion");
     },
 
-    // No Gravity - Removes the effect of gravity on the bird
     NoGravity: function() {
       if (this._activeHacks.NoGravity) return;
 
@@ -422,10 +390,8 @@ javascript:(function() {
         return console.error("Bird not found or Bird script not attached!");
       }
 
-      // Store the original gravity value to restore it later
       const originalGravity = bird.script.bird.gravity;
 
-      // Set gravity to 0
       bird.script.bird.gravity = 0;
 
       this._registerHack("NoGravity", function() {
@@ -439,13 +405,11 @@ javascript:(function() {
       this._unregisterHack("NoGravity");
     },
 
-    // Super Jump - Increases the bird's jump power
     SuperJump: async function(jumpMultiplier) {
       if (this._activeHacks.SuperJump) {
-        this.SuperJumpOff(); // Turn off existing super jump first
+        this.SuperJumpOff(); 
       }
 
-      // If no jump multiplier provided, ask for it via SweetAlert
       if (jumpMultiplier === undefined) {
         jumpMultiplier = await this._getSwalInput(
           'Super Jump',
@@ -454,10 +418,9 @@ javascript:(function() {
           2
         );
 
-        if (jumpMultiplier === null) return; // User cancelled
+        if (jumpMultiplier === null) return; 
       }
 
-      // Validate jumpMultiplier to be reasonable
       jumpMultiplier = Math.max(1.2, Math.min(5, jumpMultiplier));
 
       const app = this._getPlayCanvasApp();
@@ -468,10 +431,8 @@ javascript:(function() {
         return console.error("Bird not found or Bird script not attached!");
       }
 
-      // Store the original flapVelocity to restore it later
       const originalFlapVelocity = bird.script.bird.flapVelocity;
 
-      // Increase the flap velocity
       bird.script.bird.flapVelocity = originalFlapVelocity * jumpMultiplier;
 
       this._registerHack("SuperJump", function() {
@@ -487,7 +448,6 @@ javascript:(function() {
       this._unregisterHack("SuperJump");
     },
 
-    // Ghost Mode - Allows the bird to pass through pipes without dying
     GhostMode: function() {
       if (this._activeHacks.GhostMode) return;
 
@@ -499,26 +459,22 @@ javascript:(function() {
         return console.error("Bird not found or Bird script not attached!");
       }
 
-      // Store the original functions to restore them later
       const originalCircleRectangleIntersect = bird.script.bird.circleRectangleIntersect;
       const originalDie = bird.script.bird.die;
 
-      // Store the original bird opacity
       let originalOpacity = 1;
       if (bird.sprite) {
         originalOpacity = bird.sprite.opacity;
-        // Apply a semi-transparent effect to the bird to indicate ghost mode
+
         bird.sprite.opacity = 0.5;
       }
 
-      // Replace with a function that always returns false (no collision)
       bird.script.bird.circleRectangleIntersect = function() {
         return false;
       };
 
-      // Replace the die function but keep ground check functionality
       bird.script.bird.die = function(t) {
-        // Only die from hitting the ground, not pipes
+
         if (!t) {
           originalDie.call(bird.script.bird, t);
         }
@@ -540,7 +496,6 @@ javascript:(function() {
       this._unregisterHack("GhostMode");
     },
 
-    // Keyboard Control - Allows controlling the bird with arrow keys
     KeyboardControl: function() {
       if (this._activeHacks.KeyboardControl) return;
 
@@ -552,12 +507,10 @@ javascript:(function() {
         return console.error("Bird not found or Bird script not attached!");
       }
 
-      // Store original functions and properties for restoration
       const originalFlap = bird.script.bird.flap;
       const originalUpdate = bird.script.bird.update;
       const originalGravity = bird.script.bird.gravity;
 
-      // Variables to track keyboard state and bird movement
       const keys = {
         up: false,
         down: false,
@@ -565,38 +518,34 @@ javascript:(function() {
         right: false
       };
 
-      // Movement settings - can be adjusted
       const settings = {
-        horizontalSpeed: 1.5,  // How fast the bird moves left/right
-        verticalSpeed: 1.0,    // How fast the bird moves up/down
-        noGravity: true,       // Disable gravity completely
-        autoFlap: false,       // Auto flapping - not needed with gravity disabled
-        autoFlapInterval: null // For continuous flapping
+        horizontalSpeed: 1.5,  
+        verticalSpeed: 1.0,    
+        noGravity: true,       
+        autoFlap: false,       
+        autoFlapInterval: null 
       };
 
-      // If we want to disable gravity entirely
       if (settings.noGravity) {
-        // Disable gravity
+
         bird.script.bird.gravity = 0;
       }
 
-      // Function to handle keydown events
       function onKeyDown(e) {
-        // Arrow keys
-        if (e.keyCode === 38) {           // Up arrow
+
+        if (e.keyCode === 38) {           
           keys.up = true;
-        } else if (e.keyCode === 40) {    // Down arrow
+        } else if (e.keyCode === 40) {    
           keys.down = true;
-        } else if (e.keyCode === 37) {    // Left arrow
+        } else if (e.keyCode === 37) {    
           keys.left = true;
-        } else if (e.keyCode === 39) {    // Right arrow
+        } else if (e.keyCode === 39) {    
           keys.right = true;
-        } else if (e.keyCode === 32) {    // Spacebar (for original flap)
+        } else if (e.keyCode === 32) {    
           originalFlap.call(bird.script.bird);
         }
       }
 
-      // Function to handle keyup events
       function onKeyUp(e) {
         if (e.keyCode === 38) keys.up = false;
         else if (e.keyCode === 40) keys.down = false;
@@ -604,28 +553,25 @@ javascript:(function() {
         else if (e.keyCode === 39) keys.right = false;
       }
 
-      // If the user has started the game, make sure the bird can move
       if (bird.script.bird.state === "getready") {
-        // Put the bird into "play" mode to enable movement
+
         app.fire("game:play");
       }
 
-      // Create a new update function that adds full directional control
       bird.script.bird.update = function(dt) {
-        // Skip calling original update if we're using no gravity
+
         if (!settings.noGravity) {
-          // Call the original update function only if we're not using no-gravity mode
+
           originalUpdate.call(this, dt);
         } else {
-          // Only handle collision detection from original update, no gravity or automatic movement
+
           if (!this.paused && this.state === "play") {
-            // Check for collisions (copied from original update)
+
             const position = bird.getPosition();
             if (position.y <= this.lowestHeight) {
               this.die(false);
             }
 
-            // Collision with pipes
             if (this.state === "play") {
               const circle = {
                 x: position.x,
@@ -654,13 +600,10 @@ javascript:(function() {
           }
         }
 
-        // Skip if game is paused or over
         if (this.paused || this.state === "dead") return;
 
-        // Get current position
         const position = bird.getPosition().clone();
 
-        // Apply horizontal movement
         if (keys.left) {
           position.x -= settings.horizontalSpeed * dt;
         }
@@ -668,7 +611,6 @@ javascript:(function() {
           position.x += settings.horizontalSpeed * dt;
         }
 
-        // Apply vertical movement directly with no gravity
         if (keys.up) {
           position.y += settings.verticalSpeed * dt;
         }
@@ -676,39 +618,33 @@ javascript:(function() {
           position.y -= settings.verticalSpeed * dt;
         }
 
-        // Set the new position
         bird.setPosition(position);
 
-        // Update bird rotation based on movement direction
         if (keys.up) {
-          bird.setLocalEulerAngles(0, 0, -20); // Point slightly up
+          bird.setLocalEulerAngles(0, 0, -20); 
         } else if (keys.down) {
-          bird.setLocalEulerAngles(0, 0, 20);  // Point slightly down
+          bird.setLocalEulerAngles(0, 0, 20);  
         } else {
-          bird.setLocalEulerAngles(0, 0, 0);   // Level
+          bird.setLocalEulerAngles(0, 0, 0);   
         }
 
-        // Make sure the animation is playing
         if (bird.sprite && bird.sprite.speed === 0) {
           bird.sprite.speed = 1;
         }
       };
 
-      // Attach event listeners
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('keyup', onKeyUp);
 
       this._registerHack("KeyboardControl", function() {
-        // Remove event listeners
+
         window.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('keyup', onKeyUp);
 
-        // Restore original bird behavior
         bird.script.bird.flap = originalFlap;
         bird.script.bird.update = originalUpdate;
         bird.script.bird.gravity = originalGravity;
 
-        // Clear any intervals
         if (settings.autoFlapInterval) {
           clearInterval(settings.autoFlapInterval);
         }
@@ -727,20 +663,17 @@ javascript:(function() {
       this._unregisterHack("KeyboardControl");
     },
 
-    // No Pipes - Removes all pipes from the game
     NoPipes: function() {
       if (this._activeHacks.NoPipes) return;
 
       const app = this._getPlayCanvasApp();
       if (!app) return console.error("Could not find PlayCanvas application!");
 
-      // Find all pipe entities
       const pipeEntities = app.root.findByTag("pipe");
       if (!pipeEntities || pipeEntities.length === 0) {
         return console.error("No pipes found!");
       }
 
-      // Store original visible state and position
       const originalState = {};
       pipeEntities.forEach(pipe => {
         originalState[pipe.name] = {
@@ -749,19 +682,15 @@ javascript:(function() {
         };
       });
 
-      // Hide all pipes by moving them far away
       pipeEntities.forEach(pipe => {
-        // Move pipes far away (off-screen)
+
         pipe.setLocalPosition(100, 100, 100);
       });
 
-      // Find the pipe scroll controller if any
       let pipeScroll = null;
 
-      // Search for entities with a 'scroll' script related to pipes
       const allEntities = [];
 
-      // Helper function to collect all entities recursively
       function collectEntities(entity) {
         allEntities.push(entity);
         for (let i = 0; i < entity.children.length; i++) {
@@ -769,14 +698,12 @@ javascript:(function() {
         }
       }
 
-      // Start collecting from root
       collectEntities(app.root);
 
-      // Look for scroll entities that control pipes
       for (let i = 0; i < allEntities.length; i++) {
         const entity = allEntities[i];
         if (entity.script && entity.script.scroll) {
-          // Check if this has pipe-related tags or name
+
           if (entity.name.toLowerCase().includes("pipe")) {
             pipeScroll = entity.script.scroll;
             break;
@@ -784,45 +711,38 @@ javascript:(function() {
         }
       }
 
-      // Override collision detection in the bird script
       const bird = app.root.findByName("Bird");
 
-      // Store original functions to restore later
       let originalCircleRectangleIntersect = null;
       let originalUpdate = null;
 
       if (bird && bird.script && bird.script.bird) {
-        // Store original collision function
+
         originalCircleRectangleIntersect = bird.script.bird.circleRectangleIntersect;
 
-        // Replace with a function that always returns false (no collision)
         bird.script.bird.circleRectangleIntersect = function() {
           return false;
         };
       }
 
-      // Store the original event handlers
       const originalFire = app.fire;
 
-      // Create a new fire function that blocks pipe-related events
       app.fire = function(eventName, ...args) {
-        // Block pipe-related events
+
         if (eventName === "pipes:start" || eventName === "pipes:cycle") {
           console.log(`Blocked pipe event: ${eventName}`);
           return;
         }
 
-        // Allow all other events to pass through
         return originalFire.call(this, eventName, ...args);
       };
 
-      // If we found the pipe scroll script, disable it
       if (pipeScroll) {
         pipeScroll.frozen = true;
       }
 
       this._registerHack("NoPipes", function() {
-        // Restore original positions and visibility
+
         pipeEntities.forEach(pipe => {
           if (originalState[pipe.name]) {
             pipe.enabled = originalState[pipe.name].enabled;
@@ -830,15 +750,12 @@ javascript:(function() {
           }
         });
 
-        // Restore original app.fire function
         app.fire = originalFire;
 
-        // Re-enable pipe scroll if we found it
         if (pipeScroll) {
           pipeScroll.frozen = false;
         }
 
-        // Restore original bird collision detection
         if (bird && bird.script && bird.script.bird) {
           if (originalCircleRectangleIntersect) {
             bird.script.bird.circleRectangleIntersect = originalCircleRectangleIntersect;
@@ -856,11 +773,10 @@ javascript:(function() {
       this._unregisterHack("NoPipes");
     },
 
-    // Bird Size - Change the size of the bird
     _birdSizeChanger: null,
 
     SetBirdSize: async function(scaleFactor) {
-      // If no scale factor provided, ask for it via SweetAlert
+
       if (scaleFactor === undefined) {
         scaleFactor = await this._getSwalInput(
           'Set Bird Size',
@@ -869,7 +785,7 @@ javascript:(function() {
           2
         );
 
-        if (scaleFactor === null) return; // User cancelled
+        if (scaleFactor === null) return; 
       }
 
       if (!this._birdSizeChanger) {
@@ -881,36 +797,33 @@ javascript:(function() {
       }
     },
 
-    // Bird Size Animations
     PulseBirdSize: async function(minScale, maxScale, speed) {
-      // If parameters aren't provided, ask for them via SweetAlert
+
       if (minScale === undefined || maxScale === undefined || speed === undefined) {
-        // First get min scale
+
         minScale = await this._getSwalInput(
           'Pulse Bird Size - Min Size',
           'Enter the minimum size (0.1-1):',
           'Min Size',
           0.8
         );
-        if (minScale === null) return; // User cancelled
+        if (minScale === null) return; 
 
-        // Then get max scale
         maxScale = await this._getSwalInput(
           'Pulse Bird Size - Max Size',
           'Enter the maximum size (1-5):',
           'Max Size',
           1.2
         );
-        if (maxScale === null) return; // User cancelled
+        if (maxScale === null) return; 
 
-        // Finally get speed
         speed = await this._getSwalInput(
           'Pulse Bird Size - Speed',
           'Enter the pulse speed in ms (100-2000):',
           'Speed (ms)',
           1000
         );
-        if (speed === null) return; // User cancelled
+        if (speed === null) return; 
       }
 
       if (!this._birdSizeChanger) {
@@ -923,34 +836,32 @@ javascript:(function() {
     },
 
     GrowShrinkBirdSize: async function(startScale, endScale, duration) {
-      // If parameters aren't provided, ask for them via SweetAlert
+
       if (startScale === undefined || endScale === undefined || duration === undefined) {
-        // Get start scale
+
         startScale = await this._getSwalInput(
           'Grow/Shrink Bird - Start Size',
           'Enter the starting size (0.1-1):',
           'Start Size',
           0.2
         );
-        if (startScale === null) return; // User cancelled
+        if (startScale === null) return; 
 
-        // Get end scale
         endScale = await this._getSwalInput(
           'Grow/Shrink Bird - End Size',
           'Enter the maximum size (1-5):',
           'End Size',
           3
         );
-        if (endScale === null) return; // User cancelled
+        if (endScale === null) return; 
 
-        // Get duration
         duration = await this._getSwalInput(
           'Grow/Shrink Bird - Duration',
           'Enter the animation duration in ms (500-5000):',
           'Duration (ms)',
           2000
         );
-        if (duration === null) return; // User cancelled
+        if (duration === null) return; 
       }
 
       if (!this._birdSizeChanger) {
@@ -983,7 +894,6 @@ javascript:(function() {
         return console.error("Bird not found!");
       }
 
-      // Store original scale and collision radius
       const originalScale = bird.getLocalScale().clone();
       let originalRadius = null;
 
@@ -991,23 +901,19 @@ javascript:(function() {
         originalRadius = bird.script.bird.radius;
       }
 
-      // Scale animation variables
       let pulseInterval = null;
       let growShrinkInterval = null;
 
-      // Function to set bird size
       const setBirdSize = function(scaleFactor) {
-        // Validate scale factor (between 0.1 and 10)
+
         scaleFactor = Math.max(0.1, Math.min(10, scaleFactor));
 
-        // Apply scale
         bird.setLocalScale(
           originalScale.x * scaleFactor,
           originalScale.y * scaleFactor,
           originalScale.z * scaleFactor
         );
 
-        // Scale collision radius if available
         if (bird.script && bird.script.bird && originalRadius !== null) {
           bird.script.bird.radius = originalRadius * scaleFactor;
         }
@@ -1016,12 +922,10 @@ javascript:(function() {
         return scaleFactor;
       };
 
-      // Start pulsing animation
       const startPulsing = function(minScale = 0.8, maxScale = 1.2, speed = 1000) {
-        // Stop any existing animations
+
         stopAnimations();
 
-        // Validate values
         minScale = Math.max(0.1, minScale);
         maxScale = Math.min(5, maxScale);
         speed = Math.max(100, speed);
@@ -1046,17 +950,15 @@ javascript:(function() {
           }
 
           setBirdSize(currentScale);
-        }, speed / 20); // Divide by 20 for smoother animation
+        }, speed / 20); 
 
         console.log(`Bird pulsing animation started (${minScale}x to ${maxScale}x at ${speed}ms interval)`);
       };
 
-      // Start grow/shrink animation
       const startGrowShrink = function(startScale = 0.2, endScale = 3, duration = 2000, loop = true) {
-        // Stop any existing animations
+
         stopAnimations();
 
-        // Validate values
         startScale = Math.max(0.1, Math.min(5, startScale));
         endScale = Math.max(0.1, Math.min(5, endScale));
         duration = Math.max(500, duration);
@@ -1068,26 +970,24 @@ javascript:(function() {
           const progress = elapsed / duration;
 
           if (progress <= 0.5) {
-            // First half - grow from startScale to endScale
+
             const scale = startScale + (endScale - startScale) * (progress * 2);
             setBirdSize(scale);
           } else {
-            // Second half - shrink from endScale to startScale
+
             const scale = endScale - (endScale - startScale) * ((progress - 0.5) * 2);
             setBirdSize(scale);
           }
 
-          // If not looping and we completed one cycle, stop
-          if (!loop && elapsed < 20) { // Close to 0
+          if (!loop && elapsed < 20) { 
             stopAnimations();
             setBirdSize(startScale);
           }
-        }, 16); // ~60fps
+        }, 16); 
 
         console.log(`Bird grow/shrink animation started (${startScale}x to ${endScale}x over ${duration}ms${loop ? ", looping" : ""})`);
       };
 
-      // Stop all animations
       const stopAnimations = function() {
         if (pulseInterval) {
           clearInterval(pulseInterval);
@@ -1100,24 +1000,20 @@ javascript:(function() {
         }
       };
 
-      // Create the API object
       this._birdSizeChanger = {
-        // Set size directly
+
         setSize: setBirdSize,
 
-        // Preset sizes
         tiny: () => setBirdSize(0.3),
         small: () => setBirdSize(0.5),
         normal: () => setBirdSize(1.0),
         large: () => setBirdSize(2.0),
         giant: () => setBirdSize(4.0),
 
-        // Animations
         startPulsing,
         startGrowShrink,
         stopAnimations,
 
-        // Reset to original
         reset: function() {
           stopAnimations();
           bird.setLocalScale(originalScale.x, originalScale.y, originalScale.z);
@@ -1139,29 +1035,27 @@ javascript:(function() {
       console.log("- FlappyHacks.ResetBirdSize() - Reset to original size");
     },
 
-    // Teleport functions
     _teleporter: null,
 
     TeleportBird: async function(x, y) {
-      // If coordinates are not provided, ask for them via SweetAlert
+
       if (x === undefined || y === undefined) {
-        // Get X coordinate
+
         x = await this._getSwalInput(
           'Teleport Bird - X Coordinate',
           'Enter the X coordinate (-3 to 3):',
           'X',
           0
         );
-        if (x === null) return; // User cancelled
+        if (x === null) return; 
 
-        // Get Y coordinate
         y = await this._getSwalInput(
           'Teleport Bird - Y Coordinate',
           'Enter the Y coordinate (-3 to 3):',
           'Y',
           0
         );
-        if (y === null) return; // User cancelled
+        if (y === null) return; 
       }
 
       if (!this._teleporter) {
@@ -1174,43 +1068,40 @@ javascript:(function() {
     },
 
     CircleTeleport: async function(interval, radius, centerX, centerY) {
-      // If parameters aren't provided, ask for them via SweetAlert
+
       if (interval === undefined || radius === undefined) {
-        // Get interval
+
         interval = await this._getSwalInput(
           'Circle Teleport - Interval',
           'Enter the teleport interval in ms (50-500):',
           'Interval (ms)',
           100
         );
-        if (interval === null) return; // User cancelled
+        if (interval === null) return; 
 
-        // Get radius
         radius = await this._getSwalInput(
           'Circle Teleport - Radius',
           'Enter the circle radius (0.1-2):',
           'Radius',
           0.5
         );
-        if (radius === null) return; // User cancelled
+        if (radius === null) return; 
 
-        // Get center X (optional)
         centerX = await this._getSwalInput(
           'Circle Teleport - Center X',
           'Enter the center X coordinate (optional):',
           'Center X',
           0
         );
-        if (centerX === null) centerX = 0; // Default value
+        if (centerX === null) centerX = 0; 
 
-        // Get center Y (optional)
         centerY = await this._getSwalInput(
           'Circle Teleport - Center Y',
           'Enter the center Y coordinate (optional):',
           'Center Y',
           0
         );
-        if (centerY === null) centerY = 0; // Default value
+        if (centerY === null) centerY = 0; 
       }
 
       if (!this._teleporter) {
@@ -1223,25 +1114,24 @@ javascript:(function() {
     },
 
     ZigzagTeleport: async function(interval, distance) {
-      // If parameters aren't provided, ask for them via SweetAlert
+
       if (interval === undefined || distance === undefined) {
-        // Get interval
+
         interval = await this._getSwalInput(
           'Zigzag Teleport - Interval',
           'Enter the teleport interval in ms (100-1000):',
           'Interval (ms)',
           500
         );
-        if (interval === null) return; // User cancelled
+        if (interval === null) return; 
 
-        // Get distance
         distance = await this._getSwalInput(
           'Zigzag Teleport - Distance',
           'Enter the zigzag distance (0.1-2):',
           'Distance',
           0.5
         );
-        if (distance === null) return; // User cancelled
+        if (distance === null) return; 
       }
 
       if (!this._teleporter) {
@@ -1254,18 +1144,17 @@ javascript:(function() {
     },
 
     RandomTeleport: async function(interval, minX, maxX, minY, maxY) {
-      // If main parameters aren't provided, ask for them via SweetAlert
+
       if (interval === undefined) {
-        // Get interval
+
         interval = await this._getSwalInput(
           'Random Teleport - Interval',
           'Enter the teleport interval in ms (100-2000):',
           'Interval (ms)',
           1000
         );
-        if (interval === null) return; // User cancelled
+        if (interval === null) return; 
 
-        // Ask if user wants to customize boundaries
         if (await this._getSwalInput(
           'Random Teleport - Boundaries',
           'Do you want to customize the teleport boundaries?',
@@ -1273,43 +1162,40 @@ javascript:(function() {
           'no',
           'text'
         ) === 'yes') {
-          // Get minX
+
           minX = await this._getSwalInput(
             'Random Teleport - Min X',
             'Enter the minimum X coordinate:',
             'Min X',
             -1
           );
-          if (minX === null) minX = -1; // Default value
+          if (minX === null) minX = -1; 
 
-          // Get maxX
           maxX = await this._getSwalInput(
             'Random Teleport - Max X',
             'Enter the maximum X coordinate:',
             'Max X',
             1
           );
-          if (maxX === null) maxX = 1; // Default value
+          if (maxX === null) maxX = 1; 
 
-          // Get minY
           minY = await this._getSwalInput(
             'Random Teleport - Min Y',
             'Enter the minimum Y coordinate:',
             'Min Y',
             -0.5
           );
-          if (minY === null) minY = -0.5; // Default value
+          if (minY === null) minY = -0.5; 
 
-          // Get maxY
           maxY = await this._getSwalInput(
             'Random Teleport - Max Y',
             'Enter the maximum Y coordinate:',
             'Max Y',
             0.5
           );
-          if (maxY === null) maxY = 0.5; // Default value
+          if (maxY === null) maxY = 0.5; 
         } else {
-          // Use default values
+
           minX = -1;
           maxX = 1;
           minY = -0.5;
@@ -1347,24 +1233,19 @@ javascript:(function() {
         return console.error("Bird not found!");
       }
 
-      // Store the original position
       const originalPosition = bird.getPosition().clone();
 
-      // Teleport animation variables
       let teleportInterval = null;
 
-      // Function to teleport bird to a specific position
       const teleportTo = function(x, y, z) {
-        // Store current position before teleport for reference
+
         const currentPos = bird.getPosition().clone();
 
-        // Set new position
         bird.setPosition(x, y, z);
 
         console.log(`Bird teleported from (${currentPos.x.toFixed(2)}, ${currentPos.y.toFixed(2)}, ${currentPos.z.toFixed(2)}) to (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})`);
       };
 
-      // Function to teleport bird with a specific offset from current position
       const teleportOffset = function(offsetX, offsetY, offsetZ) {
         const currentPos = bird.getPosition().clone();
         teleportTo(
@@ -1374,69 +1255,59 @@ javascript:(function() {
         );
       };
 
-      // Start random teleportation
       const startRandomTeleport = function(interval = 1000, minX = -1, maxX = 1, minY = -0.5, maxY = 0.5) {
-        // Stop any existing teleport animation
+
         stopTeleportAnimation();
 
-        // Validate values
         interval = Math.max(100, interval);
 
         teleportInterval = setInterval(() => {
-          // Generate random position
+
           const randomX = Math.random() * (maxX - minX) + minX;
           const randomY = Math.random() * (maxY - minY) + minY;
 
-          // Teleport to random position
           teleportTo(randomX, randomY, 0);
         }, interval);
 
         console.log(`Random teleport started (interval: ${interval}ms, x: ${minX} to ${maxX}, y: ${minY} to ${maxY})`);
       };
 
-      // Start zigzag teleportation
       const startZigzagTeleport = function(interval = 500, distance = 0.5) {
-        // Stop any existing teleport animation
+
         stopTeleportAnimation();
 
-        // Validate values
         interval = Math.max(100, interval);
         distance = Math.max(0.1, Math.min(2, distance));
 
-        let direction = 1; // 1 = right, -1 = left
+        let direction = 1; 
 
         teleportInterval = setInterval(() => {
-          // Teleport with offset based on direction
+
           teleportOffset(direction * distance, direction * 0.2, 0);
 
-          // Flip direction
           direction *= -1;
         }, interval);
 
         console.log(`Zigzag teleport started (interval: ${interval}ms, distance: ${distance})`);
       };
 
-      // Start circle teleportation
       const startCircleTeleport = function(interval = 100, radius = 0.5, centerX = 0, centerY = 0) {
-        // Stop any existing teleport animation
+
         stopTeleportAnimation();
 
-        // Validate values
         interval = Math.max(50, interval);
         radius = Math.max(0.1, Math.min(2, radius));
 
         let angle = 0;
-        const angleStep = 10 * (Math.PI / 180); // 10 degrees in radians
+        const angleStep = 10 * (Math.PI / 180); 
 
         teleportInterval = setInterval(() => {
-          // Calculate position on circle
+
           const x = centerX + radius * Math.cos(angle);
           const y = centerY + radius * Math.sin(angle);
 
-          // Teleport to position on circle
           teleportTo(x, y, 0);
 
-          // Increment angle
           angle += angleStep;
           if (angle >= 2 * Math.PI) {
             angle -= 2 * Math.PI;
@@ -1446,7 +1317,6 @@ javascript:(function() {
         console.log(`Circle teleport started (interval: ${interval}ms, radius: ${radius}, center: (${centerX}, ${centerY}))`);
       };
 
-      // Stop any teleport animation
       const stopTeleportAnimation = function() {
         if (teleportInterval) {
           clearInterval(teleportInterval);
@@ -1455,7 +1325,6 @@ javascript:(function() {
         }
       };
 
-      // Create the API object
       this._teleporter = {
         teleportTo,
         teleportOffset,
@@ -1480,7 +1349,6 @@ javascript:(function() {
       console.log("- FlappyHacks.ResetBirdPosition() - Reset to original position");
     },
 
-    // Invincibility - Makes the bird completely invincible
     Invincibility: function() {
       if (this._activeHacks.Invincibility) return;
 
@@ -1492,79 +1360,66 @@ javascript:(function() {
         return console.error("Bird script not found!");
       }
 
-      // Store original functions to restore later
       const originalCircleRectangleIntersect = bird.script.bird.circleRectangleIntersect;
       const originalDie = bird.script.bird.die;
       const originalUpdate = bird.script.bird.update;
 
-      // Create a visual effect to show invincibility
       let effectInterval = null;
       const originalOpacity = bird.sprite ? bird.sprite.opacity : 1;
       let blinkState = true;
 
-      // Start blinking effect
       function startBlinkEffect() {
-        // Clear existing interval if any
+
         stopBlinkEffect();
 
-        // Set up blink interval
         effectInterval = setInterval(() => {
           blinkState = !blinkState;
           if (bird.sprite) {
             bird.sprite.opacity = blinkState ? 1 : 0.5;
           }
-        }, 300); // Blink every 300ms
+        }, 300); 
       }
 
-      // Stop blinking effect
       function stopBlinkEffect() {
         if (effectInterval) {
           clearInterval(effectInterval);
           effectInterval = null;
 
-          // Reset opacity
           if (bird.sprite) {
             bird.sprite.opacity = originalOpacity;
           }
         }
       }
 
-      // Replace collision detection function to never detect collisions
       bird.script.bird.circleRectangleIntersect = function() {
-        return false; // Never collide
+        return false; 
       };
 
-      // Replace die function to prevent death
       bird.script.bird.die = function() {
         console.log("Bird would have died, but invincibility prevented it!");
-        // Don't call original die function
+
       };
 
-      // Replace update function to prevent hitting the ground
       bird.script.bird.update = function(dt) {
-        // Skip calling original update and handle only what we need
+
         if (!this.paused) {
           const position = bird.getPosition();
 
           if (this.state === "play") {
-            // Apply gravity as usual
+
             this.velocity -= this.gravity * dt;
 
             let y = position.y;
             y += this.velocity * dt;
 
-            // Prevent going below ground
             if (y < this.lowestHeight) {
               y = this.lowestHeight;
 
-              // Bounce effect when hitting the ground
-              this.velocity = this.flapVelocity * 0.8; // 80% of normal flap power
+              this.velocity = this.flapVelocity * 0.8; 
             }
 
-            // Update position
             bird.setPosition(position.x, y, 0);
 
-            // Handle rotation based on velocity
             let angle = pc.math.clamp(this.velocity, -2, -.75);
             angle += 1;
             this.entity.setLocalEulerAngles(0, 0, 90 * angle);
@@ -1572,7 +1427,6 @@ javascript:(function() {
         }
       };
 
-      // Start the visual effect
       startBlinkEffect();
 
       this._registerHack("Invincibility", function() {
@@ -1590,15 +1444,14 @@ javascript:(function() {
       this._unregisterHack("Invincibility");
     },
 
-    // Helper function to get the PlayCanvas app
     _getPlayCanvasApp: function() {
-      // Try different ways to access the app
+
       if (typeof pc !== 'undefined' && pc.Application) {
         return pc.Application.getApplication();
       } else if (window.app) {
         return window.app;
       } else {
-        // Search for app in global scope
+
         for (let key in window) {
           if (window[key] && window[key].root && window[key].root.findByName) {
             return window[key];
@@ -1609,9 +1462,7 @@ javascript:(function() {
     }
   };
 
-  // Add to window
   window.FlappyHacks = FlappyHacks;
 
-  // List available functions on load
   FlappyHacks._listAvailableFunctions();
 })();
