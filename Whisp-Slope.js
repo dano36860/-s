@@ -1036,14 +1036,6 @@ javascript: (function() {
                 type: 'switch',
                 action: 'Slope.hack.fly.get()',
                 iconUrl: null
-            },
-            {
-                name: 'Get Position',
-                category: 'utilities',
-                description: 'Get Position Of Ball',
-                type: 'switch',
-                action: 'Slope.util.getPos()',
-                iconUrl: null
             }
         ],
         supportedsites: [{
