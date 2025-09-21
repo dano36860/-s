@@ -2,7 +2,7 @@ javascript: (function() {
     function enableSlopeHacks() {
 
         if (!window.gameInstance || !window.gameInstance.Module) {
-            alert("Game instance not found or not initialized! Make sure you're on the Slope game page.");
+            alert("Game instance not found or not initialized! Make sure wait for the game to fully load.");
             return false;
         }
 
@@ -1920,6 +1920,31 @@ javascript: (function() {
                             timerProgressBar: true
                         });
                     },
+                    get: function() {
+                        try {
+                            Swal.fire({
+                                toast: true,
+                                position: 'bottom',
+                                icon: 'info',
+                                title: `Current fly speed: ${this._speed}`,
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+                        } catch (e) {
+                            console.error(e);
+                            Swal.fire({
+                                toast: true,
+                                position: 'bottom',
+                                icon: 'error',
+                                title: `Error getting speed: ${e.message}`,
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                        }
+                    },
+
                     reset: function() {
                         this._speed = 0.7;
                         console.log(`Fly speed reset to ${this._speed}`);
