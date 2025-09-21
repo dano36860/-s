@@ -12,7 +12,6 @@ javascript: (function() {
         document.head.appendChild(s);
     }
 
-
     fetch('https://cdn.jsdelivr.net/gh/dano36860/-s@main/Slope-Hacks.js')
         .then(response => {
             if (!response.ok) throw new Error('Failed to fetch dependencies');
@@ -750,11 +749,11 @@ javascript: (function() {
             active: false
         },
         {
-        id: 'supportedsites',
-        label: 'Supported Websites',
-        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tIUZvbnQgQXdlc29tZSBGcmVlIDYuNy4yIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlL2ZyZWUgQ29weXJpZ2h0IDIwMjUgRm9udGljb25zLCBJbmMuLS0+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTY0IDY0QzQ2LjMgNjQgMzIgNzguMyAzMiA5NmwwIDk2IDQ0OCAwIDAtOTZjMC0xNy43LTE0LjMtMzItMzItMzJMNjQgNjR6TTMyIDIyNGwwIDE5MmMwIDE3LjcgMTQuMyAzMiAzMiAzMmwzODQgMGMxNy43IDAgMzItMTQuMyAzMi0zMmwwLTE5MkwzMiAyMjR6TTAgOTZDMCA2MC43IDI4LjcgMzIgNjQgMzJsMzg0IDBjMzUuMyAwIDY0IDI4LjcgNjQgNjRsMCAzMjBjMCAzNS4zLTI4LjcgNjQtNjQgNjRMNjQgNDgwYy0zNS4zIDAtNjQtMjguNy02NC02NEwwIDk2eiIvPjxsaW5lIHgxPSI0OCIgeTE9IjEyOCIgeDI9IjQ2NCIgeTI9IjEyOCIgc3Ryb2tlPSIjY2NjY2NjIiBzdHJva2Utd2lkdGg9IjQ4Ii8+PC9zdmc+',
-        active: false
-      },
+            id: 'supportedsites',
+            label: 'Supported Websites',
+            icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tIUZvbnQgQXdlc29tZSBGcmVlIDYuNy4yIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlL2ZyZWUgQ29weXJpZ2h0IDIwMjUgRm9udGljb25zLCBJbmMuLS0+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTY0IDY0QzQ2LjMgNjQgMzIgNzguMyAzMiA5NmwwIDk2IDQ0OCAwIDAtOTZjMC0xNy43LTE0LjMtMzItMzItMzJMNjQgNjR6TTMyIDIyNGwwIDE5MmMwIDE3LjcgMTQuMyAzMiAzMiAzMmwzODQgMGMxNy43IDAgMzItMTQuMyAzMi0zMmwwLTE5MkwzMiAyMjR6TTAgOTZDMCA2MC43IDI4LjcgMzIgNjQgMzJsMzg0IDBjMzUuMyAwIDY0IDI4LjcgNjQgNjRsMCAzMjBjMCAzNS4zLTI4LjcgNjQtNjQgNjRMNjQgNDgwYy0zNS4zIDAtNjQtMjguNy02NC02NEwwIDk2eiIvPjxsaW5lIHgxPSI0OCIgeTE9IjEyOCIgeDI9IjQ2NCIgeTI9IjEyOCIgc3Ryb2tlPSIjY2NjY2NjIiBzdHJva2Utd2lkdGg9IjQ4Ii8+PC9zdmc+',
+            active: false
+        },
         {
             id: 'themes',
             label: 'Themes',
@@ -804,9 +803,8 @@ javascript: (function() {
                 name: 'Set Ball Speed',
                 category: 'ballcontrol',
                 description: 'Control The Speed Of The Ball',
-                type: 'toggle',
+                type: 'switch',
                 action: 'Slope.hack.ballSpeed.set()',
-                actionOff: "Slope.hack.ballSpeed.reset()",
                 iconUrl: null
             },
             {
@@ -850,18 +848,33 @@ javascript: (function() {
                 type: 'switch',
                 action: 'Slope.hack.fly.setSpeed()',
                 iconUrl: null
-            }
-        ],
-        gravity: [{
-                name: 'Toggle Gravity',
-                category: 'gravity',
-                description: 'Toggle Gravity',
-                type: 'toggle',
-                action: "Slope.hack.gravity.toggle()",
-                actionOff: "Slope.hack.gravity.toggle()",
+            },
+            {
+                name: 'Increase Speed',
+                category: 'flight',
+                description: 'Increase Flight Speed',
+                type: 'switch',
+                action: 'Slope.hack.fly.increaseSpeed()',
                 iconUrl: null
             },
             {
+                name: 'Decrease Speed',
+                category: 'flight',
+                description: 'Decrease Flight Speed',
+                type: 'switch',
+                action: 'Slope.hack.fly.decreaseSpeed()',
+                iconUrl: null
+            },
+            {
+                name: 'Reset Speed',
+                category: 'flight',
+                description: 'Reset Flight Speed',
+                type: 'switch',
+                action: 'Slope.hack.fly.reset()',
+                iconUrl: null
+            }
+        ],
+        gravity: [{
                 name: 'Increase Gravity',
                 category: 'gravity',
                 description: 'Increase The Gravity Of The Ball',
@@ -906,7 +919,7 @@ javascript: (function() {
                 name: 'Decrease Score',
                 category: 'score',
                 description: 'Decrease score by 1',
-                type: 'button',
+                type: 'switch',
                 action: 'Slope.hack.score.decreaseOne()',
                 iconUrl: null
             },
@@ -930,16 +943,8 @@ javascript: (function() {
                 name: 'Reset Score',
                 category: 'score',
                 description: 'Reset score',
-                type: 'button',
+                type: 'switch',
                 action: 'Slope.hack.score.reset()',
-                iconUrl: null
-            },
-            {
-                name: 'Show Score',
-                category: 'score',
-                description: 'Show Current Score',
-                type: 'button',
-                action: 'Slope.hack.score.get()',
                 iconUrl: null
             }
         ],
@@ -1017,6 +1022,22 @@ javascript: (function() {
                 iconUrl: null
             },
             {
+                name: 'Get Gravity',
+                category: 'utilities',
+                description: 'Show Current Gravity.',
+                type: 'switch',
+                action: 'Slope.hack.gravity.get()',
+                iconUrl: null
+            },
+            {
+                name: 'Get Flight Speed',
+                category: 'utilities',
+                description: 'Show Current Flight Speed.',
+                type: 'switch',
+                action: 'Slope.hack.fly.get()',
+                iconUrl: null
+            },
+            {
                 name: 'Get Position',
                 category: 'utilities',
                 description: 'Get Position Of Ball',
@@ -1024,40 +1045,39 @@ javascript: (function() {
                 action: 'Slope.util.getPos()',
                 iconUrl: null
             }
-           ],
- supportedsites: [
-        {
-          name: 'https://playcanv.as/index/DLgXf1zr',
-          category: 'supportedsites',
-          description: 'Flappy Bird Website',
-          type: 'switch',
-          action: "window.open('https://playcanv.as/index/DLgXf1zr', '_blank')",
-          iconUrl: null
-        },
-        {
-          name: 'https://flappybird2d.com',
-          category: 'supportedsites',
-          description: 'Flappy Bird Website',
-          type: 'switch',
-          action: "window.open('https://flappybird2d.com', '_blank')",
-          iconUrl: null
-        },
-        {
-          name: 'https://flappybirdgame.github.io/file/',
-          category: 'supportedsites',
-          description: 'Flappy Bird Website',
-          type: 'switch',
-          action: "window.open('https://flappybirdgame.github.io/file/', '_blank')",
-          iconUrl: null
-        },
-        {
-          name: 'https://flappybird.gg/game',
-          category: 'supportedsites',
-          description: 'Flappy Bird Website',
-          type: 'switch',
-          action: "window.open('https://flappybird.gg/game', '_blank')",
-          iconUrl: null
-        }
+        ],
+        supportedsites: [{
+                name: 'https://slopecom.com',
+                category: 'supportedsites',
+                description: 'Wait For Game to fully load before running hacks.',
+                type: 'switch',
+                action: "window.open('https://slopecom.com', '_blank')",
+                iconUrl: null
+            },
+            {
+                name: 'https://slope4classroom.com',
+                category: 'supportedsites',
+                description: 'Wait For Game to fully load before running hacks.',
+                type: 'switch',
+                action: "window.open('https://slope4classroom.com', '_blank')",
+                iconUrl: null
+            },
+            {
+                name: 'https://slope.lol/games/slope/index.html',
+                category: 'supportedsites',
+                description: 'Press Play before running hacks.',
+                type: 'switch',
+                action: "window.open('https://slope.lol/games/slope/index.html', '_blank')",
+                iconUrl: null
+            },
+            {
+                name: 'https://slope.lol/games/slope/index.html',
+                category: 'supportedsites',
+                description: 'Wait for game to fully load before running the hacks.',
+                type: 'switch',
+                action: "window.open('https://slope.lol/games/slope/index.html', '_blank')",
+                iconUrl: null
+            }
         ],
         themes: []
     };
