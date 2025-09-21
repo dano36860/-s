@@ -674,7 +674,16 @@ javascript: (function() {
             try {
                 [30247888, 29188840, 29220272, 30703504, 29163616, 25388496].forEach(e => set32(read32(e + 0xC) + 0x8, 0));
                 window.gameInstance.Module.dynCall_vii(7174, 37783424);
-                alert("No Death Activated! Reload to undo! (Score will be broken if not run on home screen!)");
+                Swal.fire({
+                    toast: true,
+                    position: 'bottom',
+                    icon: 'success',
+                    title: 'No Death Activated! Reload to undo! (Score will be broken if not run on home screen!)',
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true
+                });
+
             } catch (e) {
                 console.error("Error in noDeath:", e);
             }
