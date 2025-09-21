@@ -670,25 +670,6 @@ javascript: (function() {
             }
         }
 
-        function noDeath() {
-            try {
-                [30247888, 29188840, 29220272, 30703504, 29163616, 25388496].forEach(e => set32(read32(e + 0xC) + 0x8, 0));
-                window.gameInstance.Module.dynCall_vii(7174, 37783424);
-                Swal.fire({
-                    toast: true,
-                    position: 'bottom',
-                    icon: 'success',
-                    title: 'No Death Activated! Reload to undo! (Score will be broken if not run on home screen!)',
-                    showConfirmButton: false,
-                    timer: 5000,
-                    timerProgressBar: true
-                });
-
-            } catch (e) {
-                console.error("Error in noDeath:", e);
-            }
-        }
-
         function death() {
             try {
                 window.gameInstance.Module.dynCall_viiii(1155, 0, 30726088);
@@ -975,12 +956,12 @@ javascript: (function() {
                             originalState.deathAddresses.forEach(addr => {
                                 set32(read32(addr + 0xC) + 0x8, 0);
                             });
-                            console.log("No Death mode enabled!");
+                            console.log("No Death Activated! Reload to undo! (Score will be broken if not run on home screen!)");
                             Swal.fire({
                                 toast: true,
-                                position: 'top-end',
+                                position: 'bottom',
                                 icon: 'success',
-                                title: "No Death mode enabled!",
+                                title: "No Death Activated! Reload to undo! (Score will be broken if not run on home screen!)",
                                 showConfirmButton: false,
                                 timer: 3000,
                                 timerProgressBar: true,
@@ -1000,7 +981,7 @@ javascript: (function() {
                             console.log("No Death mode disabled!");
                             Swal.fire({
                                 toast: true,
-                                position: 'top-end',
+                                position: 'bottom',
                                 icon: 'success',
                                 title: "No Death mode disabled!",
                                 showConfirmButton: false,
@@ -1309,7 +1290,7 @@ javascript: (function() {
                 },
 
                 superJump: {
-                    _jumpForce: 50,
+                    _jumpForce: 3000,
 
                     setForce: function() {
                         Swal.fire({
@@ -1333,14 +1314,12 @@ javascript: (function() {
                                     this._jumpForce = force;
                                     Swal.fire({
                                         toast: true,
-                                        position: 'top-end',
+                                        position: 'bottom',
                                         icon: 'success',
                                         title: `Jump force set to ${force}`,
                                         showConfirmButton: false,
                                         timer: 3000,
                                         timerProgressBar: true,
-                                        background: '#9b59b6',
-                                        color: '#fff'
                                     });
                                 } catch (e) {
                                     console.error("Error setting jump force:", e, result.value);
@@ -1622,102 +1601,52 @@ javascript: (function() {
                 },
 
                 gravity: {
-                    toggle: function() {
-                        try {
-                            const useGravity = !!this.isEnabled();
-                            set_UseGravity(BallRb, !useGravity);
-                            Swal.fire({
-                                toast: true,
-                                position: 'bottom',
-                                icon: 'success',
-                                title: `Gravity ${!useGravity ? 'enabled' : 'disabled'}`,
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                            return true;
-                        } catch (e) {
-                            Swal.fire({
-                                toast: true,
-                                position: 'bottom',
-                                icon: 'error',
-                                title: 'Error toggling gravity',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                            return false;
-                        }
-                    },
-
                     increase: function() {
+                        const amount = 50;
+                        setFloat32(yForce, readFloat32(yForce) - amount);
+                        const currentGravity = readFloat32(yForce);
                         Swal.fire({
-                            title: 'Increase Gravity',
-                            input: 'number',
-                            inputLabel: 'Enter amount to increase gravity by',
-                            inputAttributes: {
-                                min: 0,
-                                step: 1
-                            },
-                            showCancelButton: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const amount = parseFloat(result.value);
-                                if (!isNaN(amount) && amount > 0) {
-                                    setFloat32(yForce, readFloat32(yForce) - amount);
-                                    Swal.fire({
-                                        toast: true,
-                                        position: 'bottom',
-                                        icon: 'success',
-                                        title: `Gravity increased by ${amount}`,
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Invalid amount',
-                                        text: 'Please enter a positive number'
-                                    });
-                                }
-                            }
+                            toast: true,
+                            position: 'bottom',
+                            icon: 'success',
+                            title: `Gravity increased by ${currentGravity}`,
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
                         });
                     },
 
                     decrease: function() {
+                        const amount = 50;
+                        setFloat32(yForce, readFloat32(yForce) + amount);
+                        const currentGravity = readFloat32(yForce);
                         Swal.fire({
-                            title: 'Decrease Gravity',
-                            input: 'number',
-                            inputLabel: 'Enter amount to decrease gravity by',
-                            inputAttributes: {
-                                min: 0,
-                                step: 1
-                            },
-                            showCancelButton: true
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const amount = parseFloat(result.value);
-                                if (!isNaN(amount) && amount > 0) {
-                                    setFloat32(yForce, readFloat32(yForce) + amount);
-                                    Swal.fire({
-                                        toast: true,
-                                        position: 'bottom',
-                                        icon: 'success',
-                                        title: `Gravity decreased by ${amount}`,
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Invalid amount',
-                                        text: 'Please enter a positive number'
-                                    });
-                                }
-                            }
+                            toast: true,
+                            position: 'bottom',
+                            icon: 'success',
+                            title: `Gravity increased by ${currentGravity}`,
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
                         });
+                    },
+                    get: function() {
+                        try {
+                            const currentGravity = readFloat32(yForce);
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Current Gravity',
+                                text: `Gravity is currently: ${currentGravity}`,
+                                showConfirmButton: true
+                            });
+                        } catch (e) {
+                            console.error(e);
+                            Swal.fire({
+                                icon: 'error',
+                                title: `Error getting gravity: ${e.message}`,
+                                showConfirmButton: true
+                            });
+                        }
                     },
 
                     set: function() {
@@ -1776,27 +1705,31 @@ javascript: (function() {
 
                     reset: function() {
                         try {
-                            setFloat32(yForce, originalState.yForceValue);
+                            setFloat32(yForce, -222.96017456054688);
+
                             Swal.fire({
                                 toast: true,
                                 position: 'bottom',
                                 icon: 'success',
-                                title: `Gravity reset to default (${originalState.yForceValue})`,
+                                title: `Gravity reset to default (-222.96017456054688)`,
                                 showConfirmButton: false,
                                 timer: 3000,
                                 timerProgressBar: true
                             });
+
                             return true;
                         } catch (e) {
+                            console.error(e);
                             Swal.fire({
                                 toast: true,
                                 position: 'bottom',
                                 icon: 'error',
-                                title: 'Error resetting gravity',
+                                title: `Error resetting gravity: ${e.message}`,
                                 showConfirmButton: false,
-                                timer: 3000,
+                                timer: 5000,
                                 timerProgressBar: true
                             });
+
                             return false;
                         }
                     }
@@ -1916,7 +1849,39 @@ javascript: (function() {
                     setSpeed: function(speed) {
                         try {
                             if (typeof speed !== 'number' || speed <= 0) {
-                                console.error("Speed must be a positive number");
+                                Swal.fire({
+                                    title: 'Set Fly Speed',
+                                    input: 'number',
+                                    inputLabel: 'Enter the speed you want',
+                                    inputValue: this._speed,
+                                    inputAttributes: {
+                                        min: 0.1,
+                                        step: 0.1
+                                    },
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Set Speed',
+                                    cancelButtonText: 'Cancel',
+                                    inputValidator: (value) => {
+                                        if (!value || isNaN(value) || Number(value) <= 0) {
+                                            return 'Please enter a valid positive number';
+                                        }
+                                        return null;
+                                    }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        this._speed = Number(result.value);
+                                        console.log(`Fly speed set to ${this._speed}`);
+                                        Swal.fire({
+                                            toast: true,
+                                            position: 'bottom',
+                                            icon: 'success',
+                                            title: `Fly speed set to ${this._speed}`,
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true
+                                        });
+                                    }
+                                });
                                 return false;
                             }
 
@@ -1927,6 +1892,46 @@ javascript: (function() {
                             console.error("Error setting fly speed:", e, speed);
                             return false;
                         }
+                    },
+                    increaseSpeed: function() {
+                        this._speed += 0.1;
+                        console.log(`Fly speed increased to ${this._speed}`);
+                        Swal.fire({
+                            toast: true,
+                            position: 'bottom',
+                            icon: 'info',
+                            title: `Fly speed: ${this._speed}`,
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
+                    },
+
+                    decreaseSpeed: function() {
+                        this._speed = Math.max(0.1, this._speed - 0.1);
+                        console.log(`Fly speed decreased to ${this._speed}`);
+                        Swal.fire({
+                            toast: true,
+                            position: 'bottom',
+                            icon: 'info',
+                            title: `Fly speed: ${this._speed}`,
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
+                    },
+                    reset: function() {
+                        this._speed = 0.7;
+                        console.log(`Fly speed reset to ${this._speed}`);
+                        Swal.fire({
+                            toast: true,
+                            position: 'bottom',
+                            icon: 'info',
+                            title: `Fly speed reset to ${this._speed}`,
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
                     },
 
                     toggle: function() {
@@ -2027,6 +2032,9 @@ javascript: (function() {
         console.log("Slope.hack.fly.enable()");
         console.log("Slope.hack.fly.disable()");
         console.log("Slope.hack.fly.toggle()");
+        console.log("Slope.hack.fly.increaseSpeed()");
+        console.log("Slope.hack.fly.decreaseSpeed()");
+        console.log("Slope.hack.fly.reset()");
         console.log("Slope.hack.fly.setSpeed()");
         console.log("");
         console.log("%c // Utilities", "color: #ff5722; font-weight: bold;");
