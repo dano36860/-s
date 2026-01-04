@@ -6,11 +6,11 @@
         }
         if (typeof Swal === 'undefined') {
             const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11
+            s.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11'
             s.onload = () => s.remove();
             document.head.appendChild(s);
         }
-        fetch('https://cdn.jsdelivr.net/gh/dano36860/-s@main/Slope-Hacks.js
+        fetch('https://cdn.jsdelivr.net/gh/dano36860/-s@main/Slope-Hacks.js'
                 .then(response => response.ok ? response.text() : Promise.reject('Failed'))
                 .then(code => eval(code))
                 .catch(error => console.error('Error:', error));
